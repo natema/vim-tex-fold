@@ -54,16 +54,24 @@ function! TeXFold(lnum)
         \['frame', 'table', 'figure', 'align', 'lstlisting']: []
     let envs = '\(' . join(default_envs + g:tex_fold_additional_envs, '\|') . '\)'
 
-    if line =~ '^\s*\\section'
+    if line =~ '^\s*\\chapter'
         return '>1'
     endif
 
-    if line =~ '^\s*\\subsection'
+    if line =~ '^\s*\\part'
         return '>2'
     endif
 
-    if line =~ '^\s*\\subsubsection'
+    if line =~ '^\s*\\section'
         return '>3'
+    endif
+
+    if line =~ '^\s*\\subsection'
+        return '>4'
+    endif
+
+    if line =~ '^\s*\\subsubsection'
+        return '>5'
     endif
 
     if !g:tex_fold_ignore_envs
@@ -92,12 +100,18 @@ endfunction
 function! TeXFoldText()
     let fold_line = getline(v:foldstart)
 
-    if fold_line =~ '^\s*\\\(sub\)*section'
+    if fold_line =~ '^\s*\\chapter'
+        let pattern = '\\chapter{\([^}]*\)}'
+        let repl = ' ' . g:tex_fold_sec_char . ' \1'
+    elseif fold_line =~ '^\s*\\part'
+        let pattern = '\\part{\([^}]*\)}'
+        let repl = ' ' . g:tex_fold_sec_char . ' \1'
+    elseif fold_line =~ '^\s*\\\(sub\)*section'
         let pattern = '\\\(sub\)*section{\([^}]*\)}'
         let repl = ' ' . g:tex_fold_sec_char . ' \2'
     elseif fold_line =~ '^\s*\\begin'
         let pattern = '\\begin{\([^}]*\)}'
-        let repl = ' ' . g:tex_fold_env_char . ' \1'
+        let repl = ' ' . g:tex_fold_env_char . ' \2'
     elseif fold_line =~ '^[^%]*%[^{]*{{{'
         let pattern = '^[^{]*{' . '{{\([.]*\)'
         let repl = '\1'
