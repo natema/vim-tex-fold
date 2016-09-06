@@ -85,11 +85,11 @@ function! TeXFold(lnum)
     endif
 
     if g:tex_fold_allow_marker
-        if line =~ '^[^%]*%[^{]*{{{'
+        if line =~ '^[^%]*%[^{]*STARTFOLD'
             return 'a1'
         endif
 
-        if line =~ '^[^%]*%[^}]*}}}'
+        if line =~ '^[^%]*%[^}]*ENDFOLD'
             return 's1'
         endif
     endif
@@ -112,7 +112,7 @@ function! TeXFoldText()
     elseif fold_line =~ '^\s*\\begin'
         let pattern = '\\begin{\([^}]*\)}'
         let repl = ' ' . g:tex_fold_env_char . ' \2'
-    elseif fold_line =~ '^[^%]*%[^{]*{{{'
+    elseif fold_line =~ '^[^%]*%[^{]*STARTFOLD'
         let pattern = '^[^{]*{' . '{{\([.]*\)'
         let repl = '\1'
     endif
